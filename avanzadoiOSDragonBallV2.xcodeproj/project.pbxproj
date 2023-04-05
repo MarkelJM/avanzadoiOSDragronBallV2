@@ -43,6 +43,18 @@
 		D304106229DC88AC00194DD9 /* HeroesListTableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D304106129DC88AC00194DD9 /* HeroesListTableViewDataSource.swift */; };
 		D304106329DC88AC00194DD9 /* HeroesListTableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D304106129DC88AC00194DD9 /* HeroesListTableViewDataSource.swift */; };
 		D304106429DC88AC00194DD9 /* HeroesListTableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D304106129DC88AC00194DD9 /* HeroesListTableViewDataSource.swift */; };
+		D304106729DDE1CD00194DD9 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = D304106629DDE1CD00194DD9 /* Keychain.swift */; };
+		D304106829DDE1CD00194DD9 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = D304106629DDE1CD00194DD9 /* Keychain.swift */; };
+		D304106929DDE1CD00194DD9 /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = D304106629DDE1CD00194DD9 /* Keychain.swift */; };
+		D304106C29DDEEF300194DD9 /* HeroesListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D304106B29DDEEF300194DD9 /* HeroesListViewModel.swift */; };
+		D304106D29DDEEF300194DD9 /* HeroesListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D304106B29DDEEF300194DD9 /* HeroesListViewModel.swift */; };
+		D304106E29DDEEF300194DD9 /* HeroesListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D304106B29DDEEF300194DD9 /* HeroesListViewModel.swift */; };
+		D304107029DDF51900194DD9 /* HeroesListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D304106F29DDF51900194DD9 /* HeroesListViewController.swift */; };
+		D304107129DDF51900194DD9 /* HeroesListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D304106F29DDF51900194DD9 /* HeroesListViewController.swift */; };
+		D304107229DDF51900194DD9 /* HeroesListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D304106F29DDF51900194DD9 /* HeroesListViewController.swift */; };
+		D304107429DDF59800194DD9 /* HeroesListTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D304107329DDF59800194DD9 /* HeroesListTableView.swift */; };
+		D304107529DDF59800194DD9 /* HeroesListTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D304107329DDF59800194DD9 /* HeroesListTableView.swift */; };
+		D304107629DDF59800194DD9 /* HeroesListTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D304107329DDF59800194DD9 /* HeroesListTableView.swift */; };
 		D3FDFA8729DB3F9900A21CB8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3FDFA8629DB3F9900A21CB8 /* AppDelegate.swift */; };
 		D3FDFA8929DB3F9900A21CB8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3FDFA8829DB3F9900A21CB8 /* SceneDelegate.swift */; };
 		D3FDFA8B29DB3F9900A21CB8 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3FDFA8A29DB3F9900A21CB8 /* ViewController.swift */; };
@@ -89,6 +101,10 @@
 		D304105829DC7AA900194DD9 /* Hero+CoreData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Hero+CoreData.swift"; sourceTree = "<group>"; };
 		D304105D29DC7B6C00194DD9 /* HeroeListViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeroeListViewCell.swift; sourceTree = "<group>"; };
 		D304106129DC88AC00194DD9 /* HeroesListTableViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeroesListTableViewDataSource.swift; sourceTree = "<group>"; };
+		D304106629DDE1CD00194DD9 /* Keychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Keychain.swift; sourceTree = "<group>"; };
+		D304106B29DDEEF300194DD9 /* HeroesListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeroesListViewModel.swift; sourceTree = "<group>"; };
+		D304106F29DDF51900194DD9 /* HeroesListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeroesListViewController.swift; sourceTree = "<group>"; };
+		D304107329DDF59800194DD9 /* HeroesListTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeroesListTableView.swift; sourceTree = "<group>"; };
 		D3FDFA8329DB3F9900A21CB8 /* avanzadoiOSDragonBallV2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = avanzadoiOSDragonBallV2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D3FDFA8629DB3F9900A21CB8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D3FDFA8829DB3F9900A21CB8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -151,6 +167,7 @@
 		D304104D29DC76C900194DD9 /* HeroesList */ = {
 			isa = PBXGroup;
 			children = (
+				D304106A29DDEED900194DD9 /* VModel */,
 				D304105C29DC7B3B00194DD9 /* View */,
 				D304105329DC789A00194DD9 /* Controller */,
 				D304104E29DC76DB00194DD9 /* Model */,
@@ -171,6 +188,7 @@
 			children = (
 				D304105429DC78C300194DD9 /* HeroesListTableViewDelegate.swift */,
 				D304106129DC88AC00194DD9 /* HeroesListTableViewDataSource.swift */,
+				D304106F29DDF51900194DD9 /* HeroesListViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -179,8 +197,25 @@
 			isa = PBXGroup;
 			children = (
 				D304105D29DC7B6C00194DD9 /* HeroeListViewCell.swift */,
+				D304107329DDF59800194DD9 /* HeroesListTableView.swift */,
 			);
 			path = View;
+			sourceTree = "<group>";
+		};
+		D304106529DDE1BA00194DD9 /* Keychain */ = {
+			isa = PBXGroup;
+			children = (
+				D304106629DDE1CD00194DD9 /* Keychain.swift */,
+			);
+			path = Keychain;
+			sourceTree = "<group>";
+		};
+		D304106A29DDEED900194DD9 /* VModel */ = {
+			isa = PBXGroup;
+			children = (
+				D304106B29DDEEF300194DD9 /* HeroesListViewModel.swift */,
+			);
+			path = VModel;
 			sourceTree = "<group>";
 		};
 		D3FDFA7A29DB3F9900A21CB8 = {
@@ -206,6 +241,7 @@
 		D3FDFA8529DB3F9900A21CB8 /* avanzadoiOSDragonBallV2 */ = {
 			isa = PBXGroup;
 			children = (
+				D304106529DDE1BA00194DD9 /* Keychain */,
 				D304104D29DC76C900194DD9 /* HeroesList */,
 				D304104829DC712600194DD9 /* HomeTabBar */,
 				D304104329DC3E4000194DD9 /* API */,
@@ -419,7 +455,10 @@
 				D304103029DC2A8500194DD9 /* CoreDataManager.swift in Sources */,
 				D3FDFAC229DB483F00A21CB8 /* HeroeCD.xcdatamodeld in Sources */,
 				D3FDFA8B29DB3F9900A21CB8 /* ViewController.swift in Sources */,
+				D304107429DDF59800194DD9 /* HeroesListTableView.swift in Sources */,
+				D304106729DDE1CD00194DD9 /* Keychain.swift in Sources */,
 				D304105929DC7AA900194DD9 /* Hero+CoreData.swift in Sources */,
+				D304107029DDF51900194DD9 /* HeroesListViewController.swift in Sources */,
 				D304103C29DC3C5A00194DD9 /* LoginView.swift in Sources */,
 				D304104A29DC714000194DD9 /* HomeTabViewController.swift in Sources */,
 				D3FDFA9129DB3F9900A21CB8 /* avanzadoiOSDragonBallV2.xcdatamodeld in Sources */,
@@ -429,6 +468,7 @@
 				D304105E29DC7B6C00194DD9 /* HeroeListViewCell.swift in Sources */,
 				D3FDFA8729DB3F9900A21CB8 /* AppDelegate.swift in Sources */,
 				D304106229DC88AC00194DD9 /* HeroesListTableViewDataSource.swift in Sources */,
+				D304106C29DDEEF300194DD9 /* HeroesListViewModel.swift in Sources */,
 				D304104029DC3C8F00194DD9 /* LoginViewModel.swift in Sources */,
 				D3FDFA8929DB3F9900A21CB8 /* SceneDelegate.swift in Sources */,
 			);
@@ -440,6 +480,7 @@
 			files = (
 				D304103D29DC3C5A00194DD9 /* LoginView.swift in Sources */,
 				D304103129DC2A8500194DD9 /* CoreDataManager.swift in Sources */,
+				D304106D29DDEEF300194DD9 /* HeroesListViewModel.swift in Sources */,
 				D304106329DC88AC00194DD9 /* HeroesListTableViewDataSource.swift in Sources */,
 				D304105A29DC7AA900194DD9 /* Hero+CoreData.swift in Sources */,
 				D304105F29DC7B6C00194DD9 /* HeroeListViewCell.swift in Sources */,
@@ -450,8 +491,11 @@
 				D304104B29DC714000194DD9 /* HomeTabViewController.swift in Sources */,
 				D304103929DC3C3800194DD9 /* LoginViewController.swift in Sources */,
 				D304103529DC377B00194DD9 /* Constants.swift in Sources */,
+				D304107129DDF51900194DD9 /* HeroesListViewController.swift in Sources */,
 				D304104129DC3C8F00194DD9 /* LoginViewModel.swift in Sources */,
 				D304105129DC76EA00194DD9 /* HeroModel.swift in Sources */,
+				D304106829DDE1CD00194DD9 /* Keychain.swift in Sources */,
+				D304107529DDF59800194DD9 /* HeroesListTableView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -463,14 +507,18 @@
 				D304103A29DC3C3800194DD9 /* LoginViewController.swift in Sources */,
 				D304103E29DC3C5A00194DD9 /* LoginView.swift in Sources */,
 				D304105229DC76EA00194DD9 /* HeroModel.swift in Sources */,
+				D304106E29DDEEF300194DD9 /* HeroesListViewModel.swift in Sources */,
 				D304104729DC3E5100194DD9 /* ApiClient.swift in Sources */,
+				D304106929DDE1CD00194DD9 /* Keychain.swift in Sources */,
 				D304103629DC377B00194DD9 /* Constants.swift in Sources */,
 				D3FDFAAD29DB3F9A00A21CB8 /* avanzadoiOSDragonBallV2UITestsLaunchTests.swift in Sources */,
 				D304104229DC3C8F00194DD9 /* LoginViewModel.swift in Sources */,
 				D3FDFAC429DB483F00A21CB8 /* HeroeCD.xcdatamodeld in Sources */,
+				D304107229DDF51900194DD9 /* HeroesListViewController.swift in Sources */,
 				D304105B29DC7AA900194DD9 /* Hero+CoreData.swift in Sources */,
 				D304105729DC78C300194DD9 /* HeroesListTableViewDelegate.swift in Sources */,
 				D304103229DC2A8500194DD9 /* CoreDataManager.swift in Sources */,
+				D304107629DDF59800194DD9 /* HeroesListTableView.swift in Sources */,
 				D3FDFAAB29DB3F9A00A21CB8 /* avanzadoiOSDragonBallV2UITests.swift in Sources */,
 				D304106429DC88AC00194DD9 /* HeroesListTableViewDataSource.swift in Sources */,
 				D304104C29DC714000194DD9 /* HomeTabViewController.swift in Sources */,

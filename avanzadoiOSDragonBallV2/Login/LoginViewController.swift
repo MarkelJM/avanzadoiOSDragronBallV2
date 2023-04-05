@@ -18,6 +18,8 @@ class LoginViewController: UIViewController {
     
     var viewModel: LoginViewModel?
     
+    let keychainManager = KeychainManager()
+    
     override func loadView() {
         let loginView = LoginView()
         
@@ -70,23 +72,29 @@ class LoginViewController: UIViewController {
         
         viewModel?.updateUI = {[weak self] token, error in
             DispatchQueue.main.async {
+                if !error.isEmpty {
+                    DispatchQueue.main.async {
+                            debugPrint("Se produjo un error al hacer login")                    }
+                    self?.keychainManager.deleteData()
+                }
+                
                 if !token.isEmpty {
-                    
+                    // Guardar el token en el Keychain
+                    self?.keychainManager.saveData(token)
+
                     self?.loggedMessage?.text = token
                     self?.dismiss(animated: true, completion: nil)
                     let homeTabBarController = HomeTabBarViewController()
                     self?.view.window?.rootViewController = homeTabBarController
-                    
+
                     return
                 }
                 if !error.isEmpty {
                     self?.loggedMessage?.text = error
                 }
-                
             }
-            
-        
         }
+
         
         viewModel?.login(user: user, password: password)
         
