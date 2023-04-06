@@ -26,7 +26,7 @@ class HeroeListViewCell: UITableViewCell {
     
     let heroeDescription: UILabel = {
         let label = UILabel()
-        label.numberOfLines = 5
+        label.numberOfLines = 2
         label.font = label.font.withSize(12)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label

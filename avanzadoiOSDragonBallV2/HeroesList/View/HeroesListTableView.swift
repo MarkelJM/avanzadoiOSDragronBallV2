@@ -32,6 +32,17 @@ class HeroesListView: UIView {
         return tableView
     }()
     
+    let logoutButton : UIButton = {
+        let button = UIButton()
+        button.setTitle("Logout", for: .normal )
+        button.backgroundColor = .systemBlue
+        button.layer.borderWidth = 2
+        button.layer.cornerRadius = 4
+        button.layer.borderColor = UIColor.green.cgColor
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
     
     
     override init(frame: CGRect) {

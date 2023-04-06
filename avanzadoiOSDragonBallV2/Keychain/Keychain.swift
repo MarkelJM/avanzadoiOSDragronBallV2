@@ -115,6 +115,12 @@ class KeychainManager {
             debugPrint("error al guardar información")
         }
     }
+    
+    func hasToken() -> Bool {
+        let token = readData()
+        return !token.isEmpty
+    }
+
 
 
 }

@@ -24,4 +24,5 @@ class HeroesListViewModel: NSObject {
             self?.updateUI?(heroes)
         }
     }
+    
 }
