@@ -28,16 +28,16 @@ class HomeTabBarViewController: UITabBarController {
        
         let tabImage = UIImage(systemName: "text.justify")!
         navigationController1.tabBarItem = UITabBarItem(title: "TableView", image: tabImage, tag: 0)
-        /*
-        let navigationController2 = UINavigationController(rootViewController: MapHeroesViewController())
+        
+        let navigationController2 = UINavigationController(rootViewController: MapViewController())
         let tabImg = UIImage(systemName: "square.grid.3x3.topleft.filled")!
         navigationController2.tabBarItem = UITabBarItem(title: "MapView", image: tabImg, tag: 1)
         
         
         viewControllers = [navigationController1, navigationController2]
-        */
+        /*
         viewControllers = [navigationController1]
-
+         */
         
     }
     private func setupLayout() {

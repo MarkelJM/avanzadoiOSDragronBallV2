@@ -5,6 +5,117 @@
 //  Created by Markel Juaristi on 5/4/23.
 //
 
+
+
+import Foundation
+import UIKit
+import CoreData
+
+class HeroesListViewController : UIViewController {
+    
+    let keychainManager = KeychainManager()
+
+    var mainView: HeroesListView {self.view as! HeroesListView}
+    var viewModel: HeroesListViewModel?
+    
+    private var tableViewDataSource: HeroesListTableViewDataSource?
+    private var tableViewDelegate: HeroesListTableViewDelegate?
+    
+    private var heroListViewModel = HeroesListViewModel()
+    private var loginViewModel = LoginViewModel()
+    
+    private var loginViewController: LoginViewController?
+    
+    override func loadView() {
+        view = HeroesListView()
+            
+        mainView.logoutButton.addTarget(self, action: #selector(logoutButtonActivated), for: .touchUpInside)
+        
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        setupTableView()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(logoutApp),name: Notification.Name("Logout"),object: nil)
+        
+        if !keychainManager.hasToken() {
+            // cerrar la vista de Heroes
+            self.dismiss(animated: true) {
+                // presentar la vista de Login
+                let loginVC = LoginViewController()
+                loginVC.modalPresentationStyle = .fullScreen
+                self.present(loginVC, animated: true, completion: nil)
+            }
+            
+            return
+        }
+        fetchHeroesData()
+    }
+    
+    @objc func logoutButtonActivated(_ sender: Any) {
+        NotificationCenter.default.post(Notification(name: Notification.Name("Logout")))
+    }
+    
+    @objc func logoutApp() {
+        keychainManager.deleteData()
+        CoreDataUtils.deleteStoredHeroes()
+        
+        DispatchQueue.main.async {
+            if let navigationController = self.navigationController {
+                navigationController.popToRootViewController(animated: true)
+            } else {
+                self.dismiss(animated: true, completion: {
+                    // presentar la vista de Login
+                    let loginVC = LoginViewController()
+                    loginVC.modalPresentationStyle = .fullScreen
+                    self.present(loginVC, animated: true, completion: nil)
+                })
+            }
+        }
+    }
+
+    private func setupTableView() {
+        tableViewDataSource = HeroesListTableViewDataSource(tableView: mainView.heroesTableView)
+        tableViewDelegate = HeroesListTableViewDelegate()
+
+        mainView.heroesTableView.dataSource = tableViewDataSource
+        mainView.heroesTableView.delegate = tableViewDelegate
+        
+        mainView.heroesTableView.register(HeroeListViewCell.self, forCellReuseIdentifier: "HeroeListViewCell")
+    }
+    
+    private func fetchHeroesData() {
+        // Primero, intentamos obtener los datos de CoreData
+        let storedHeroes = CoreDataUtils.getStoredHeroes()
+        
+        if storedHeroes.isEmpty {
+            // Si no hay datos almacenados en CoreData, los obtenemos desde la API
+            heroListViewModel.getHeroesFromAPI { [weak self] heroes in
+                self?.tableViewDataSource?.set(heroes: heroes)
+            }
+        } else {
+            // Si hay datos almacenados en CoreData, los utilizamos
+            let heroes = storedHeroes.map { hero in
+                return HeroModel(
+                    photo: hero.photo ?? "",
+                    id: hero.id,
+                    favorite: hero.favorite,
+                    name: hero.name,
+                    description: hero.details,
+                    latitude: hero.latitude,
+                    longitude: hero.longitude
+                )
+            }
+            tableViewDataSource?.set(heroes: heroes)
+        }
+    }
+
+}
+
+
+/*
 import Foundation
 import UIKit
 
@@ -28,6 +139,9 @@ class HeroesListViewController : UIViewController {
     
     override func loadView() {
         view = HeroesListView()
+            
+        mainView.logoutButton.addTarget(self, action: #selector(logoutButtonActivated), for: .touchUpInside)
+        
     }
     
     override func viewDidLoad() {
@@ -66,11 +180,11 @@ class HeroesListViewController : UIViewController {
         keychainManager.deleteData()
 
         /* cuando se marcha de la ap de forma directa eliminamos coredata, despues actualizamos datos con DataSource. Proxima entrada llamada API*/
-        CoreDataManager.deleteStoredHeroes()
+        CoreDataUtils.deleteStoredHeroes()
         
         /* esta línea de código se utiliza para actualizar la fuente de datos de la tabla con los héroes almacenados más recientes
          convertimos de HeroModel a Hero*/
-        let heroes = CoreDataManager.getStoredHeroes().map { hero in
+        let heroes = CoreDataUtils.getStoredHeroes().map { hero in
             return HeroModel(
                 photo: hero.photo ?? "",
                 id: hero.id,
@@ -82,50 +196,48 @@ class HeroesListViewController : UIViewController {
             )
         }
         tableViewDataSource?.set(heroes: heroes)
-
-        // cerrar la vista de Heroes
-            self.dismiss(animated: true) {
-                // presentar la vista de Login
-                let loginVC = LoginViewController()
-                loginVC.modalPresentationStyle = .fullScreen
-                self.present(loginVC, animated: true, completion: nil)
+        DispatchQueue.main.async {
+            if let navigationController = self.navigationController {
+                navigationController.popToRootViewController(animated: true)
+            } else {
+                self.dismiss(animated: true, completion: {
+                    // presentar la vista de Login
+                    let loginVC = LoginViewController()
+                    loginVC.modalPresentationStyle = .fullScreen
+                    self.present(loginVC, animated: true, completion: nil)
+                })
             }
-    }
-    
-    private func getHeroesData() {
-        let storedHeroes = CoreDataManager.getStoredHeroes()
-
-        if storedHeroes.isEmpty {
-            // Si no hay héroes almacenados, llamar al viewModel para obtener los héroes desde la API
-            viewModel?.getHeroesData { [weak self] (heroes: [HeroModel]) in
-                // Actualizar el dataSource y la tableView
-                self?.tableViewDataSource?.set(heroes: heroes)
-                self?.mainView.tableView.reloadData()
-            }
-        } else {
-            // Si hay héroes almacenados, actualizar el dataSource y la tableView
-            let heroes = storedHeroes.map { hero in
-                return HeroModel(
-                    photo: hero.photo ?? "",
-                    id: hero.id,
-                    favorite: hero.favorite,
-                    name: hero.name,
-                    description: hero.details,
-                    latitude: 0,
-                    longitude: 0
-                )
-            }
-            tableViewDataSource?.set(heroes: heroes)
-            mainView.tableView.reloadData()
         }
     }
+    
+
+    
+    private func getHeroesData() {
+        viewModel?.getHeroesData { [weak self] (heroes: [HeroModel]) in
+            debugPrint("prueba 6")
+
+            // Update the dataSource and the tableView
+            self?.tableViewDataSource?.set(heroes: heroes)
+            self?.mainView.heroesTableView.reloadData()
+            debugPrint("prueba 7")
+
+        }
+    }
+
     func fetchData(){
         /* traer los datos: CALL API TO GET HERO LIST*/
+        debugPrint("prueba 8")
+
         viewModel?.getData()
+        debugPrint("prueba 1")
+
         
     }
+
+    
 
 
 
 
 }
+*/

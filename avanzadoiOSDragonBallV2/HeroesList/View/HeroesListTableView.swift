@@ -60,7 +60,7 @@ class HeroesListView: UIView {
         
         addSubview(headerLabel)
         addSubview(heroesTableView)
-        
+        addSubview(logoutButton)
         
         
         NSLayoutConstraint.activate([
@@ -75,6 +75,10 @@ class HeroesListView: UIView {
             heroesTableView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16),
             heroesTableView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -16),
             
+            logoutButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 16),
+            logoutButton.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            logoutButton.heightAnchor.constraint(equalToConstant: 40),
+            logoutButton.widthAnchor.constraint(equalToConstant: 80),
         
         ])
     }

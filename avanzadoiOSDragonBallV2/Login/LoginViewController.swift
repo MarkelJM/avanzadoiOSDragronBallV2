@@ -8,6 +8,9 @@
 import Foundation
 import UIKit
 
+protocol LoginDelegate {
+    func dismiss()
+}
 class LoginViewController: UIViewController {
     var mainView: LoginView {self.view as! LoginView}
     
