@@ -15,3 +15,19 @@ struct HeroMapModel: Decodable {
 
 }
 
+extension HeroMapModel {
+    func toHeroModel() -> HeroModel {
+        return HeroModel(
+            photo: "",
+            id: UUID().uuidString,
+            favorite: false,
+            name: self.name,
+            description: "",
+            latitude: self.latitude,
+            longitude: self.longitude
+        )
+    }
+}
+
+
+

@@ -13,117 +13,96 @@ import CoreLocation
 class MapViewController: UIViewController {
     
     // Define mapView como una propiedad computada para acceder fácilmente a MapView
-    var mapView: MKMapView = {
-        let map = MKMapView()
-        map.overrideUserInterfaceStyle = .light
-        return map
-    }()
-    
-    // CLLocationManager para manejar la ubicación del usuario
-    var locationManager: CLLocationManager?
-    
-    // ViewModel para interactuar con datos y la API
-    var viewModel = MapViewModel()
-    
-    // HeroModel seleccionado en la pantalla anterior
-    var selectedHero: HeroModel!
-    
-    // Método viewDidLoad que se llama cuando se carga la vista
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        // Configuración del CLLocationManager
-        locationManager = CLLocationManager()
-        locationManager?.delegate = self
-        locationManager?.requestWhenInUseAuthorization()
-        locationManager?.startUpdatingLocation()
-        
-        // Configuración de la vista del mapa
-        mapView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(mapView)
-        NSLayoutConstraint.activate([
-            mapView.topAnchor.constraint(equalTo: view.topAnchor),
-            mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            mapView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
-        
-        // Obtener los datos de los héroes
-        fetchData()
-        
-        // Define la región inicial de visualización del mapa en Europa
-        let initialLocation = CLLocation(latitude: 48.8566, longitude: 2.3522) // Paris, France
-            let regionRadius: CLLocationDistance = 10000000 // 10,000 km
-            let region = MKCoordinateRegion(center: initialLocation.coordinate, latitudinalMeters: regionRadius, longitudinalMeters: regionRadius)
-            mapView.setRegion(region, animated: true)
-    }
-    
-    // Función para recuperar los datos de los héroes de CoreData o de la API
-    private func fetchData() {
-        if let hero = selectedHero {
-            let heroesFromCoreData = viewModel.getHeroesFromCoreData()
-            if !heroesFromCoreData.isEmpty {
-                updateMap(heroes: heroesFromCoreData)
-            } else {
-                viewModel.fetchHeroLocations(hero: hero) { [weak self] locations in
-                    DispatchQueue.main.async {
-                        self?.addLocationsToMapView(locations: locations)
+        var mapView: MKMapView = {
+            let map = MKMapView()
+            map.overrideUserInterfaceStyle = .light
+            map.translatesAutoresizingMaskIntoConstraints = false
+            return map
+        }()
+
+        // CLLocationManager para manejar la ubicación del usuario
+        var locationManager: CLLocationManager?
+
+        // ViewModel para interactuar con datos y la API
+        var viewModel = MapViewModel()
+
+        // HeroModel seleccionado en la pantalla anterior
+        var selectedHero: HeroModel!
+
+        // Método viewDidLoad que se llama cuando se carga la vista
+        override func viewDidLoad() {
+            super.viewDidLoad()
+
+            // Configuración del CLLocationManager
+            locationManager = CLLocationManager()
+            locationManager?.delegate = self
+            locationManager?.requestWhenInUseAuthorization()
+            locationManager?.startUpdatingLocation()
+
+            // Configuración de la vista del mapa
+            view.addSubview(mapView)
+            NSLayoutConstraint.activate([
+                mapView.topAnchor.constraint(equalTo: view.topAnchor),
+                mapView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                mapView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                mapView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            ])
+
+            // Registramos la vista de anotación personalizada
+            mapView.register(AnnotationView.self, forAnnotationViewWithReuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
+
+            // Obtener los datos de los héroes
+            fetchData()
+        }
+
+        override func viewWillAppear(_ animated: Bool) {
+            super.viewWillAppear(animated)
+            fetchData()
+        }
+
+        // Función para recuperar los datos de los héroes de CoreData o de la API
+        private func fetchData() {
+            if let hero = selectedHero {
+                let heroesFromCoreData = viewModel.getHeroesFromCoreData()
+                if !heroesFromCoreData.isEmpty {
+                    updateMap(heroes: heroesFromCoreData)
+                } else {
+                    viewModel.fetchHeroLocations(hero: hero) { [weak self] heroMapModels in
+                        let heroModels = self?.mapHeroModels(heroMapModels) ?? []
+                        self?.updateMap(heroes: heroModels)
                     }
                 }
             }
         }
-    }
-    
-    // Función para actualizar el mapa con los datos de los héroes
-    private func updateMap(heroes: [HeroModel]) {
-        let locations = heroes.map { HeroMapModel(name: $0.name, latitude: $0.latitude ?? 0, longitude: $0.longitude ?? 0) }
-        addLocationsToMapView(locations: locations)
-    }
-    
-    // Función para agregar ubicaciones al mapa
-    private func addLocationsToMapView(locations: [HeroMapModel]) {
-        for location in locations {
-            let annotation = MKPointAnnotation()
-            annotation.title = location.name
-            annotation.coordinate = CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
-            mapView.addAnnotation(annotation)
+
+        // Función para actualizar el mapa con los datos de los héroes
+        private func updateMap(heroes: [HeroModel]) {
+            let annotations = heroes.map { Annotation(place: $0) }
+            mapView.showAnnotations(annotations, animated: true)
         }
-    }
+
     
-    // Función para manejar la actualización de la ubicación del usuario
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if let location = locations.first {
-            mapView.setCenter(location.coordinate, animated: true)
-            locationManager?.stopUpdatingLocation()
-        }
-    }
-    
-    // Función para manejar cambios en la autorización de ubicación
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        if status == .denied || status == .restricted {
-            showAlert()
-        }
-    }
-    
-    private func showAlert() {
-        let alertController = UIAlertController(title: "Location Access Disabled",
-                                                message: "Please open Settings and set location access for this app to 'While Using the App'.",
-                                                preferredStyle: .alert)
+    // Función para mapear los datos de los héroes de tipo HeroMapModel a HeroModel
+    private func mapHeroModels(_ heroMapModels: [HeroMapModel]) -> [HeroModel] {
+        var heroModels: [HeroModel] = []
         
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
-        alertController.addAction(cancelAction)
-        
-        let openAction = UIAlertAction(title: "Open Settings", style: .default) { _ in
-            if let url = URL(string: UIApplication.openSettingsURLString) {
-                UIApplication.shared.open(url, options: [:], completionHandler: nil)
-            }
+        for heroMapModel in heroMapModels {
+            let heroModel = HeroModel(
+                photo: "",
+                id: "",
+                favorite: false,
+                name: heroMapModel.name,
+                description: "",
+                latitude: heroMapModel.latitude,
+                longitude: heroMapModel.longitude
+            )
+            
+            heroModels.append(heroModel)
         }
-        alertController.addAction(openAction)
         
-        self.present(alertController, animated: true, completion: nil)
+        return heroModels
     }
 }
-
 
 extension MapViewController: MKMapViewDelegate{
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {

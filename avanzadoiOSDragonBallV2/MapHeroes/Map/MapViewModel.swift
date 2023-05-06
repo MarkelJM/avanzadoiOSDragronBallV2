@@ -22,16 +22,17 @@ class MapViewModel: NSObject {
     }
 
     func fetchHeroLocations(hero: HeroModel, completion: @escaping ([HeroMapModel]) -> Void) {
-        let apiClient = ApiClient(token: keyChainContext.readData())
-        
-        apiClient.getLocations(with: hero.id) { (locations: [HeroMapModel], error: Error?) in
-            if let error = error {
-                print("Error fetching locations: \(error)")
-            } else {
-                completion(locations)
+            let apiClient = ApiClient(token: keyChainContext.readData())
+            
+            apiClient.getLocations(with: hero.id) { (locations: [HeroMapModel], error: Error?) in
+                if let error = error {
+                    print("Error fetching locations: \(error)")
+                } else {
+                    completion(locations)
+                }
             }
         }
-    }
+
 
     func getHeroesFromCoreData() -> [HeroModel] {
         

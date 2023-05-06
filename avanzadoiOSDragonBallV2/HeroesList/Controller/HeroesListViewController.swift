@@ -5,91 +5,105 @@
 //  Created by Markel Juaristi on 5/4/23.
 //
 
-
-
 import Foundation
 import UIKit
 import CoreData
 
-class HeroesListViewController : UIViewController {
-    
+class HeroesListViewController: UIViewController {
+
     let keychainManager = KeychainManager()
 
-    var mainView: HeroesListView {self.view as! HeroesListView}
-    var viewModel: HeroesListViewModel?
-    
-    private var tableViewDataSource: HeroesListTableViewDataSource?
-    private var tableViewDelegate: HeroesListTableViewDelegate?
-    
-    private var heroListViewModel = HeroesListViewModel()
-    private var loginViewModel = LoginViewModel()
-    
-    private var loginViewController: LoginViewController?
-    
-    override func loadView() {
-        view = HeroesListView()
-            
-        mainView.logoutButton.addTarget(self, action: #selector(logoutButtonActivated), for: .touchUpInside)
-        
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
+        var mainView: HeroesListView {self.view as! HeroesListView}
 
-        setupTableView()
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(logoutApp),name: Notification.Name("Logout"),object: nil)
-        
-        if !keychainManager.hasToken() {
-            // cerrar la vista de Heroes
-            self.dismiss(animated: true) {
-                // presentar la vista de Login
-                let loginVC = LoginViewController()
-                loginVC.modalPresentationStyle = .fullScreen
-                self.present(loginVC, animated: true, completion: nil)
-            }
-            
-            return
+        private var tableViewDataSource: HeroesListTableViewDataSource?
+        private var tableViewDelegate: HeroesListTableViewDelegate?
+
+        private var heroListViewModel = HeroesListViewModel()
+        private var loginViewModel = LoginViewModel()
+
+        private var loginViewController: LoginViewController?
+        private var detailViewController: DetailViewController?
+
+        override func loadView() {
+            view = HeroesListView()
+            mainView.logoutButton.addTarget(self, action: #selector(logoutButtonActivated), for: .touchUpInside)
         }
-        fetchHeroesData()
-    }
-    
-    @objc func logoutButtonActivated(_ sender: Any) {
-        NotificationCenter.default.post(Notification(name: Notification.Name("Logout")))
-    }
-    
-    @objc func logoutApp() {
-        keychainManager.deleteData()
-        CoreDataUtils.deleteStoredHeroes()
-        
-        DispatchQueue.main.async {
-            if let navigationController = self.navigationController {
-                navigationController.popToRootViewController(animated: true)
-            } else {
-                self.dismiss(animated: true, completion: {
+
+        override func viewDidLoad() {
+            super.viewDidLoad()
+
+            setupTableView()
+
+            NotificationCenter.default.addObserver(self, selector: #selector(logoutApp),name: Notification.Name("Logout"),object: nil)
+
+            if !keychainManager.hasToken() {
+                // cerrar la vista de Heroes
+                self.dismiss(animated: true) {
                     // presentar la vista de Login
                     let loginVC = LoginViewController()
                     loginVC.modalPresentationStyle = .fullScreen
                     self.present(loginVC, animated: true, completion: nil)
-                })
+                }
+
+                return
+            }
+
+            fetchHeroesData()
+        }
+
+        override func viewWillAppear(_ animated: Bool) {
+            super.viewWillAppear(animated)
+            navigationController?.navigationBar.isHidden = true
+        }
+
+        override func viewWillDisappear(_ animated: Bool) {
+            super.viewWillDisappear(animated)
+            navigationController?.navigationBar.isHidden = false
+        }
+
+        @objc func logoutButtonActivated(_ sender: Any) {
+            NotificationCenter.default.post(Notification(name: Notification.Name("Logout")))
+        }
+
+        @objc func logoutApp() {
+            keychainManager.deleteData()
+            CoreDataUtils.deleteStoredHeroes()
+
+            DispatchQueue.main.async {
+                if let navigationController = self.navigationController {
+                    navigationController.popToRootViewController(animated: true)
+                } else {
+                    self.dismiss(animated: true, completion: {
+                        // presentar la vista de Login
+                        let loginVC = LoginViewController()
+                        loginVC.modalPresentationStyle = .fullScreen
+                        self.present(loginVC, animated: true, completion: nil)
+                    })
+                }
             }
         }
-    }
 
-    private func setupTableView() {
-        tableViewDataSource = HeroesListTableViewDataSource(tableView: mainView.heroesTableView)
-        tableViewDelegate = HeroesListTableViewDelegate()
+        private func setupTableView() {
+            tableViewDataSource = HeroesListTableViewDataSource(tableView: mainView.heroesTableView)
+            tableViewDelegate = HeroesListTableViewDelegate()
 
-        mainView.heroesTableView.dataSource = tableViewDataSource
-        mainView.heroesTableView.delegate = tableViewDelegate
-        
-        mainView.heroesTableView.register(HeroeListViewCell.self, forCellReuseIdentifier: "HeroeListViewCell")
-    }
-    
+            mainView.heroesTableView.dataSource = tableViewDataSource
+            mainView.heroesTableView.delegate = tableViewDelegate
+
+            tableViewDelegate?.didTapOnCell = { [weak self] index in
+                if let hero = self?.tableViewDataSource?.heroes[index] {
+                    self?.showHeroDetail(hero)
+                }
+            }
+
+
+            mainView.heroesTableView.register(HeroeListViewCell.self, forCellReuseIdentifier: "HeroeListViewCell")
+        }
+
     private func fetchHeroesData() {
         // Primero, intentamos obtener los datos de CoreData
         let storedHeroes = CoreDataUtils.getStoredHeroes()
-        
+
         if storedHeroes.isEmpty {
             // Si no hay datos almacenados en CoreData, los obtenemos desde la API
             heroListViewModel.getHeroesFromAPI { [weak self] heroes in
@@ -112,7 +126,15 @@ class HeroesListViewController : UIViewController {
         }
     }
 
+    private func showHeroDetail(_ hero: HeroModel) {
+        let detailViewModel = DetailViewModel(heroId: hero.id)
+        let detailViewController = DetailViewController(viewModel: detailViewModel)
+        navigationController?.pushViewController(detailViewController, animated: true)
+    }
+
+
 }
+
 
 
 /*

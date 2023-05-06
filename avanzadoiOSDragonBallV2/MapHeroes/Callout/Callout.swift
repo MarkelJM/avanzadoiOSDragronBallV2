@@ -73,6 +73,4 @@ class CallOut: UIView{
             imageView.heightAnchor.constraint(equalToConstant: 200).isActive = true
             imageView.widthAnchor.constraint(equalToConstant: 280).isActive = true
         }
-    
-    
 }

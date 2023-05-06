@@ -23,6 +23,7 @@ class AnnotationView: MKMarkerAnnotationView {
             // Añadimos la imagen
             self.image = resizedImage
         }
+
     }
     
     override func didMoveToSuperview() {
