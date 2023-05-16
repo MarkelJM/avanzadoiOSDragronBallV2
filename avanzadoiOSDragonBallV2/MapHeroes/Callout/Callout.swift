@@ -8,6 +8,66 @@
 import UIKit
 import Kingfisher
 
+class CallOut: UIView {
+    var heroNameLabel: UILabel!
+    var heroImageView: UIImageView!
+    var detailButton: UIButton!
+    var onDetailButtonTapped: (() -> Void)?
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setupViews()
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func configure(with annotation: Annotation) {
+        heroNameLabel.text = annotation.name
+        // Aquí debes cargar la imagen del héroe
+        let url = URL(string: annotation.image)
+        heroImageView.kf.setImage(with: url)
+    }
+
+    private func setupViews() {
+        heroNameLabel = UILabel()
+        heroNameLabel.translatesAutoresizingMaskIntoConstraints = false
+
+        heroImageView = UIImageView()
+        heroImageView.translatesAutoresizingMaskIntoConstraints = false
+
+        detailButton = UIButton()
+        detailButton.setTitle("Details", for: .normal)
+        detailButton.addTarget(self, action: #selector(showDetails), for: .touchUpInside)
+        detailButton.translatesAutoresizingMaskIntoConstraints = false
+
+        addSubview(heroNameLabel)
+        addSubview(heroImageView)
+        addSubview(detailButton)
+
+        NSLayoutConstraint.activate([
+            heroNameLabel.topAnchor.constraint(equalTo: topAnchor),
+            heroNameLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+            heroNameLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
+
+            heroImageView.topAnchor.constraint(equalTo: heroNameLabel.bottomAnchor),
+            heroImageView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            heroImageView.trailingAnchor.constraint(equalTo: trailingAnchor),
+
+            detailButton.topAnchor.constraint(equalTo: heroImageView.bottomAnchor),
+            detailButton.bottomAnchor.constraint(equalTo: bottomAnchor),
+            detailButton.centerXAnchor.constraint(equalTo: centerXAnchor)
+        ])
+    }
+
+    @objc func showDetails() {
+        onDetailButtonTapped?()
+    }
+}
+
+
+/*
 class CallOut: UIView{
     private let titleLabel = UILabel(frame: .zero)
     private let subtitleLabel = UILabel(frame: .zero)
@@ -74,3 +134,4 @@ class CallOut: UIView{
             imageView.widthAnchor.constraint(equalToConstant: 280).isActive = true
         }
 }
+*/

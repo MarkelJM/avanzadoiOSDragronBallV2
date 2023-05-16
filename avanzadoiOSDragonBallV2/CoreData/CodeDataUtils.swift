@@ -12,7 +12,7 @@ class CoreDataUtils {
     
     static var context = AppDelegate.sharedAppDelegate.coreDataManager.managedContext
     
-    private static func storeHero(_ hero: HeroModel) {
+    static func storeHero(_ hero: HeroModel) {
         let heroDB = Hero(context: context)
         
         heroDB.id = hero.id

@@ -6,15 +6,16 @@
 //
 
 import Foundation
+import UIKit
 
 struct HeroMapModel: Decodable {
     
-    let name: String
+    let id: String
     let latitude: Double
     let longitude:Double
 
 }
-
+/*
 extension HeroMapModel {
     func toHeroModel() -> HeroModel {
         return HeroModel(
@@ -28,6 +29,6 @@ extension HeroMapModel {
         )
     }
 }
-
+*/
 
 

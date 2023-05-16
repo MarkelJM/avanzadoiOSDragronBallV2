@@ -6,8 +6,8 @@
 //
 
 
-
 import Foundation
+import  UIKit
 
 class HeroesListViewModel {
     private let apiClient: ApiClient
@@ -23,91 +23,50 @@ class HeroesListViewModel {
     }
     
     func getHeroesFromAPI(completion: @escaping ([HeroModel]) -> Void) {
-            apiClient.getHeroes { [weak self] heroes, error in
-                if let error = error {
-                    // Manejar el error
-                    print("Error fetching heroes: \(error.localizedDescription)")
-                } else {
-                    self?.heroes = heroes
+        apiClient.getHeroes { [weak self] heroes, error in
+            if let error = error {
+                // Manejar el error
+                print("Error fetching heroes: \(error.localizedDescription)")
+            } else {
+                var allHeroes: [HeroModel] = []
+                /* Lo usaremos para manejar tareas asincronas ya que son muchos datos y debemos esperar a que lleguen todo*/
+                let group = DispatchGroup()
+                for hero in heroes {
+                    group.enter()
+                    self?.apiClient.getLocations(with: hero.id) { locations, error in
+                        var fullHero = hero
+                        if let firstLocation = locations.first {
+                            fullHero.latitude = Double(firstLocation.latitude)
+                            fullHero.longitude = Double(firstLocation.longitude)
+                        } else {
+                            fullHero.latitude = 0.0
+                            fullHero.longitude = 0.0
+                        }
+                        allHeroes.append(fullHero)
+                        group.leave()
+                    }
+                }
+                
+                group.notify(queue: .main) {
+                    self?.heroes = allHeroes
                     
                     // Guardar los datos en CoreData
+                    for hero in allHeroes {
+                        CoreDataUtils.storeHero(hero)
+                    }
                     
                     // Notificar a la vista que los datos se han actualizado
                     self?.dataUpdated?()
                     
                     // Llamar al completion handler con los héroes obtenidos
-                    completion(heroes)
+                    completion(allHeroes)
                 }
             }
         }
-
+    }
     
     func logout() {
         // Eliminar el token del Keychain
         keychainManager.deleteData()
     }
 }
-
-
-
-/*
-import Foundation
-import CoreData
-
-class HeroesListViewModel: NSObject {
-    /*de momenoto no lo uso*/
-    let context = AppDelegate.sharedAppDelegate.coreDataManager.managedContext
-
-    private var apiClient: ApiClient?
-    let keychainManager = KeychainManager()
-        
-    override init() {
-        apiClient = ApiClient(token: keychainManager.readData())
-    }
-    
-    
-    var updateUI: ((_ heroesList: [HeroModel]) -> Void)?
-    /*
-    func getData() {
-        let apiClient = ApiClient(token: keychainManager.readData())
-        apiClient.getHeroes { [weak self] heroes, error in
-            self?.updateUI?(heroes)
-        }
-    }
-     */
-    func getHeroesData(completion: @escaping ([HeroModel]) -> Void) {
-        let storedHeroes = CoreDataUtils.getStoredHeroes()
-        debugPrint("prueba 1")
-    
-
-        if storedHeroes.isEmpty {
-            apiClient?.getHeroes { [weak self] heroes, error in
-                    for hero in heroes {
-                        let longitude = hero.longitude != nil ? String(hero.longitude!) : nil
-                        let latitude = hero.latitude != nil ? String(hero.latitude!) : nil
-                        CoreDataManager.shared.storeHero(hero.id, hero.name, hero.description, hero.photo, longitude ?? "0.0", latitude ?? "0.0")
-                    }
-                    self?.updateUI?(heroes)
-                }
-        } else {
-            let heroes = storedHeroes.map { hero in
-                        return HeroModel(
-                            photo: hero.photo ?? "",
-                            id: hero.id,
-                            favorite: hero.favorite,
-                            name: hero.name,
-                            description: hero.details,
-                            latitude: hero.latitude != 0 ? hero.latitude : nil,
-                            longitude: hero.longitude != 0 ? hero.longitude : nil
-                        )
-                    }
-            debugPrint("prueba 2")
-
-            completion(heroes)
-            debugPrint("prueba 3")
-
-        }
-    }
-    
-}
-*/
